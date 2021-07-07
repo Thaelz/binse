@@ -4,9 +4,21 @@ import logging
 import sys
 from rich.console import Console
 from rich.text import Text
+from hexdump import hexdump
 
 log = logging.getLogger("rich")
 
+def print_hexdump(ba, start, end):
+    """
+    Wrap hexdump to print 16 bytes before our pattern
+    and 16 bytes after.
+    """
+    wrap_range = (end - start) // 2
+    if wrap_range < 16:
+        wrap_range = 16
+    wrap_start = (start & 0xfffffffffffffff0) - wrap_range
+    wrap_end   = (end   & 0xfffffffffffffff0) + 2*wrap_range
+    hexdump(ba[wrap_start:wrap_end], wrap_start)
 
 def search_occurence(ref, ba, margin=16, verbose=False):
     """ search_occurence
@@ -22,12 +34,7 @@ def search_occurence(ref, ba, margin=16, verbose=False):
         l += [(e.start(), e.end())]
 
     console = Console()
-    if len(l) > 0:
-        text = Text("Found ")
-        text.append("{}".format(len(l)), style="red")
-        text.append(" match(es)!")
-        console.print(text)
-    else:
+    if len(l) <= 0:
         text = Text("No match found", style="red")
         text.append(" for {}".format(ref.decode()))
         console.print(text)
@@ -39,5 +46,7 @@ def search_occurence(ref, ba, margin=16, verbose=False):
         text.stylize("bold magenta", 0, 5)
         text.stylize("blue", 14, 25)
         console.print(text)
+
+        print_hexdump(ba, start, end)
         
     
