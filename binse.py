@@ -56,9 +56,9 @@ if __name__ == '__main__':
     log.setLevel(logging_level)
 
     if args.str:
-        pattern = args.pattern.encode()
+        pattern = args.pattern.encode('unicode_escape')
     else:
-        pattern = unhexlify(args.pattern.encode())
+        pattern = unhexlify(args.pattern.encode('unicode_escape'))
 
     logging.debug("Pattern : {}".format(pattern))
     with open(args.file, "rb") as fin:
