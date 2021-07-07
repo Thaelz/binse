@@ -5,6 +5,7 @@ import sys
 from rich.console import Console
 from rich.text import Text
 from hexdump import hexdump
+from binascii import hexlify
 
 log = logging.getLogger("rich")
 
@@ -18,7 +19,15 @@ def print_hexdump(ba, start, end):
         wrap_range = 16
     wrap_start = (start & 0xfffffffffffffff0) - wrap_range
     wrap_end   = (end   & 0xfffffffffffffff0) + 2*wrap_range
-    hexdump(ba[wrap_start:wrap_end], wrap_start)
+    hexdump(ba[wrap_start:wrap_end], wrap_start, highlight_range=(start, end))
+
+def findall(p, s):
+    '''Yields all the positions of
+    the pattern p in the string s.'''
+    i = s.find(p)
+    while i != -1:
+        yield (i, i+len(p))
+        i = s.find(p, i+1)
 
 def search_occurence(ref, ba, margin=16, verbose=False):
     """ search_occurence
@@ -29,14 +38,14 @@ def search_occurence(ref, ba, margin=16, verbose=False):
     l = []
 
     log.debug('{} ref: {} - ba {} (cropped)'.format('search_occurence', ref, ba[:16]))
-    p = re.compile(ref)
-    for e in p.finditer(ba):
-        l += [(e.start(), e.end())]
+    #p = re.compile(ref)
+    for start, end in findall(ref, ba):
+        l += [(start, end)]
 
     console = Console()
     if len(l) <= 0:
         text = Text("No match found", style="red")
-        text.append(" for {}".format(ref.decode()))
+        text.append(" for {}".format(hexlify(ref).decode()))
         console.print(text)
         return
 
