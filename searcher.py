@@ -2,6 +2,7 @@ from IPython import embed
 import re
 import logging
 import sys
+import lief
 from rich.console import Console
 from rich.text import Text
 from hexdump import hexdump
@@ -43,9 +44,14 @@ def search_occurence(filename, ref, margin=16, verbose=False, isELF=False):
     isELF = ba.startswith(b'\x7fELF')
 
     log.debug('{} ref: {} - ba {} (cropped)'.format('search_occurence', ref, ba[:16]))
-    #p = re.compile(ref)
+    
     for start, end in findall(ref, ba):
         l += [(start, end)]
+
+    if isELF:
+        elf = lief.parse(filename)
+        vas = get_vas_for_fos(elf, l)
+
 
     console = Console()
     if len(l) <= 0:
@@ -54,13 +60,10 @@ def search_occurence(filename, ref, margin=16, verbose=False, isELF=False):
         console.print(text)
         return
 
-    if isELF:
-        vas = get_vas_for_fos(filename, l)
-
     for i in range(len(l)):
         start, end = l[i]
         text = Text("#{:03} - offset 0x{:08x}".format(i+1, start))
-        if isELF:
+        if isELF and not elf.is_pie:
             text.append(" - vaddr 0x{:08x}".format(vas[i]))
         text.stylize("bold magenta", 0, 5)
         text.stylize("blue", 14, 25)

@@ -3,6 +3,8 @@ import sys
 import argparse
 import logging
 from rich.logging import RichHandler
+from rich.text import Text
+from rich.console import Console
 from binascii import unhexlify
 
 from searcher import search_occurence
@@ -14,7 +16,7 @@ def cmdline_args():
     
     p.add_argument("pattern",
                    help="Pattern to search for, hexstring by default")
-    p.add_argument("file",
+    p.add_argument("file", nargs='+',
                    help="File to look inside")
     p.add_argument("--str", action="store_true",
                    help="pattern is defined as a string")
@@ -41,6 +43,7 @@ if __name__ == '__main__':
     )
 
     log = logging.getLogger("rich")
+    console = Console()
         
     args = None
     pattern = None
@@ -61,6 +64,11 @@ if __name__ == '__main__':
         pattern = unhexlify(args.pattern.encode('unicode_escape'))
 
     logging.debug("Pattern : {}".format(pattern))
-    search_occurence(args.file, pattern)
+    for f in args.file:
+        if len(args.file) > 1:
+            pf = Text("Processing {}..".format(f))
+            pf.stylize("green", 11, 11+len(f))
+            console.print(pf)
+        search_occurence(f, pattern)
 
     

@@ -1,10 +1,8 @@
-import lief
 import sys
 from IPython import embed
 
 
-def get_vas_for_fos(filename, fos):
-    elf = lief.parse(filename)
+def get_vas_for_fos(elf, fos):
     vas = []
     for fo, _ in fos:
         foundVA = False
@@ -19,9 +17,3 @@ def get_vas_for_fos(filename, fos):
         if not foundVA:
             vas += [None]
     return vas
-
-
-
-if __name__ == '__main__':
-    for filename in sys.argv[1:]:
-        print_vas_for_fos(filename)
