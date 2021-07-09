@@ -6,6 +6,7 @@ from rich.console import Console
 from rich.text import Text
 from hexdump import hexdump
 from binascii import hexlify
+from elfer import get_vas_for_fos
 
 log = logging.getLogger("rich")
 
@@ -29,13 +30,17 @@ def findall(p, s):
         yield (i, i+len(p))
         i = s.find(p, i+1)
 
-def search_occurence(ref, ba, margin=16, verbose=False):
+def search_occurence(filename, ref, margin=16, verbose=False, isELF=False):
     """ search_occurence
     ref   : reference byte array to look for
     ba    : byte array to search inside for ref
     margin: nb of bytes to show before and after match
     """
     l = []
+    with open(filename, "rb") as fin:
+        ba = fin.read() 
+    
+    isELF = ba.startswith(b'\x7fELF')
 
     log.debug('{} ref: {} - ba {} (cropped)'.format('search_occurence', ref, ba[:16]))
     #p = re.compile(ref)
@@ -49,11 +54,17 @@ def search_occurence(ref, ba, margin=16, verbose=False):
         console.print(text)
         return
 
+    if isELF:
+        vas = get_vas_for_fos(filename, l)
+
     for i in range(len(l)):
         start, end = l[i]
         text = Text("#{:03} - offset 0x{:08x}".format(i+1, start))
+        if isELF:
+            text.append(" - vaddr 0x{:08x}".format(vas[i]))
         text.stylize("bold magenta", 0, 5)
         text.stylize("blue", 14, 25)
+        text.stylize("blue", 33, 43)
         console.print(text)
 
         print_hexdump(ba, start, end)

@@ -61,7 +61,6 @@ if __name__ == '__main__':
         pattern = unhexlify(args.pattern.encode('unicode_escape'))
 
     logging.debug("Pattern : {}".format(pattern))
-    with open(args.file, "rb") as fin:
-        search_occurence(pattern, fin.read())
+    search_occurence(args.file, pattern)
 
     
