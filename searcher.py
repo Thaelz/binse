@@ -3,6 +3,7 @@ import re
 import logging
 import sys
 import lief
+from math import log as lg
 from rich.console import Console
 from rich.text import Text
 from hexdump import hexdump
@@ -11,7 +12,7 @@ from elfer import get_vas_for_fos
 
 log = logging.getLogger("rich")
 
-def print_hexdump(ba, start, end):
+def print_hexdump(ba, start, end, bytes_addr=4):
     """
     Wrap hexdump to print 16 bytes before our pattern
     and 16 bytes after.
@@ -21,7 +22,9 @@ def print_hexdump(ba, start, end):
         wrap_range = 16
     wrap_start = (start & 0xfffffffffffffff0) - wrap_range
     wrap_end   = (end   & 0xfffffffffffffff0) + 2*wrap_range
-    hexdump(ba[wrap_start:wrap_end], wrap_start, highlight_range=(start, end))
+    hexdump(ba[wrap_start:wrap_end],
+        wrap_start, highlight_range=(start, end),
+        bytes_addr=bytes_addr)
 
 def findall(p, s):
     '''Yields all the positions of
@@ -60,6 +63,9 @@ def search_occurence(filename, ref, margin=16, verbose=False, isELF=False):
         console.print(text)
         return
 
+    # Printing calculations
+    bytes_addr = (int(lg(len(ba), 2)) // 8) + 1
+
     for i in range(len(l)):
         start, end = l[i]
         text = Text("#{:03} - offset 0x{:08x}".format(i+1, start))
@@ -70,6 +76,6 @@ def search_occurence(filename, ref, margin=16, verbose=False, isELF=False):
         text.stylize("blue", 33, 43)
         console.print(text)
 
-        print_hexdump(ba, start, end)
+        print_hexdump(ba, start, end, bytes_addr)
         
     

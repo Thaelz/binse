@@ -26,16 +26,17 @@ def highlight_bytes(ba : Text, offset : int,
 
 
 
-def hexdump(buffer, offset, bytesperline=16, highlight_range=None):
+def hexdump(buffer, offset, bytesperline=16,
+    highlight_range=None, bytes_addr=4):
     """
     hexdump print the *buffer* as it is starting at *offset*
     with *bytesperline* bytes per .. line!
     """
-
     console = Console()
     for i in range(0, len(buffer), bytesperline) :
         data = buffer[i: i + bytesperline]
-        line  = Text("{:08x}".format(offset + i))
+        addr = "{:x}".format(offset + i)
+        line  = Text("{}".format(addr.rjust(bytes_addr<<1, '0')))
         line += "    "
         bytes = Text(''.join([ char if not ind or ind % 2 else ' ' + char
                     for ind,char in enumerate(hexlify(data).decode())
@@ -47,7 +48,7 @@ def hexdump(buffer, offset, bytesperline=16, highlight_range=None):
         line += bytes
         line += "    "
         line += ''.join([ chr(c) if c >= 0x20 and c < 0x7f else '.' for c in data])
-        line.stylize('medium_purple1', 0, 8)
+        line.stylize('medium_purple1', 0, (bytes_addr<<1) + 1)
         console.print(line)
 
 
