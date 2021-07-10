@@ -6,6 +6,9 @@ A simple and colorful binary searching tool printing the hexdump surrounding eac
 - Highlight matching hex
 - Disable hexdump
 
+## Demo
+
+[![asciicast](https://asciinema.org/a/424831.svg)](https://asciinema.org/a/424831)
 
 ## Install
 
