@@ -7,7 +7,7 @@ from rich.text import Text
 from rich.console import Console
 from binascii import unhexlify
 
-from searcher import search_occurence
+from binse.searcher import search_occurence
 
 def cmdline_args():
         # Make parser object
@@ -53,7 +53,7 @@ def main():
         args = cmdline_args()
 
     except:
-        log.error('usage: {} PATTERN FILE'.format(sys.argv[0]))
+        #log.error('usage: {} PATTERN FILE'.format(sys.argv[0]))
         sys.exit(1)
 
     logging_level = "DEBUG" if args.verbosity else "INFO"

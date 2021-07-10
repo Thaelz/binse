@@ -22,7 +22,7 @@ $ binse -h
 ```
 
 
-## Use
+## Use
 
 To seek all 'ls' in /bin/ls
 ```
@@ -43,6 +43,7 @@ Disable hexdump, nothing more `--simple`
 ```
 $ binse 4142 -s /bin/ls
 ```
+
 
 ## Improvements
 
