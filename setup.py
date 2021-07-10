@@ -1,0 +1,26 @@
+from setuptools import setup, find_packages
+import pathlib
+
+here = pathlib.Path(__file__).parent.resolve()
+long_description = (here / 'README.md').read_text(encoding='utf-8')
+
+setup(  name='binse',
+        description='A binary searching tool',
+        long_description=long_description,
+        long_description_content_type='text/markdown',
+        url='https://github.com/Thaelz/binse',
+        keywords='binary, search, hex',
+        version='0.1',
+        python_requires='>=3.5, <4',
+        package_dir={'': 'src'},
+        install_requires=[
+            'rich',
+            'lief'
+        ],
+        entry_points={
+          'console_scripts': [
+              'binse=binse:main',
+          ],
+        },
+        py_modules=['binse'],
+)

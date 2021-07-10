@@ -1,5 +1,4 @@
 import sys
-from IPython import embed
 
 
 def get_vas_for_fos(elf, fos):

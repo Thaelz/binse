@@ -34,7 +34,8 @@ def findall(p, s):
         yield (i, i+len(p))
         i = s.find(p, i+1)
 
-def search_occurence(filename, ref, margin=16, verbose=False, isELF=False):
+def search_occurence(filename, ref, margin=16, 
+    verbose=False, isELF=False, show_hexdump=True):
     """ search_occurence
     ref   : reference byte array to look for
     ba    : byte array to search inside for ref
@@ -46,7 +47,9 @@ def search_occurence(filename, ref, margin=16, verbose=False, isELF=False):
     
     isELF = ba.startswith(b'\x7fELF')
 
-    log.debug('{} ref: {} - ba {} (cropped)'.format('search_occurence', ref, ba[:16]))
+    log.debug('{} ref: {} - ba {} (cropped)'.format(
+            'search_occurence', ref, ba[:16]
+        ))
     
     for start, end in findall(ref, ba):
         l += [(start, end)]
@@ -76,6 +79,7 @@ def search_occurence(filename, ref, margin=16, verbose=False, isELF=False):
         text.stylize("blue", 33, 43)
         console.print(text)
 
-        print_hexdump(ba, start, end, bytes_addr)
+        if show_hexdump:
+            print_hexdump(ba, start, end, bytes_addr)
+            
         
-    

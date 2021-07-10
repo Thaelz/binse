@@ -1,0 +1,3 @@
+- Faster?
+- Support for regex
+- Option for max matches

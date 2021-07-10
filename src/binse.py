@@ -20,6 +20,8 @@ def cmdline_args():
                    help="File to look inside")
     p.add_argument("--str", action="store_true",
                    help="pattern is defined as a string")
+    p.add_argument("-s", "--simple", action="store_true", 
+                   help="prevent hexdump print for any match")
     p.add_argument("-v", "--verbosity", action="store_true", 
                    help="increase output verbosity (default: false)")
                    
@@ -30,7 +32,7 @@ def cmdline_args():
     return(p.parse_args())
 
 
-if __name__ == '__main__':
+def main():
     
     if sys.version_info<(3,5,0):
         sys.stderr.write("You need python 3.5 or later to run this script\n")
@@ -49,7 +51,6 @@ if __name__ == '__main__':
     pattern = None
     try:
         args = cmdline_args()
-        log.debug(args)
 
     except:
         log.error('usage: {} PATTERN FILE'.format(sys.argv[0]))
@@ -63,12 +64,16 @@ if __name__ == '__main__':
     else:
         pattern = unhexlify(args.pattern.encode('unicode_escape'))
 
+    show_hexdump = not args.simple
+
     logging.debug("Pattern : {}".format(pattern))
     for f in args.file:
         if len(args.file) > 1:
             pf = Text("Processing {}..".format(f))
             pf.stylize("green", 11, 11+len(f))
             console.print(pf)
-        search_occurence(f, pattern)
+        search_occurence(f, pattern, show_hexdump=show_hexdump)
 
     
+if __name__ == '__main__':
+    main()
