@@ -6,9 +6,10 @@ import lief
 from math import log as lg
 from rich.console import Console
 from rich.text import Text
-from hexdump import hexdump
 from binascii import hexlify
-from elfer import get_vas_for_fos
+
+from binse.hexdump import hexdump
+from binse.elfer import get_vas_for_fos
 
 log = logging.getLogger("rich")
 
